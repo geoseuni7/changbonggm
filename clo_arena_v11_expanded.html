@@ -1,0 +1,1831 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CLO ARENA — 카드 미션 아레나</title>
+<style>
+:root {
+  --bg:#0a0d16;
+  --panel:#121827;
+  --panel2:#192338;
+  --line:#2a3650;
+  --text:#eef3ff;
+  --muted:#98a7c4;
+  --cyan:#55d9e8;
+  --gold:#ffc96b;
+  --red:#ff667d;
+  --green:#65dfa2;
+}
+* {
+  box-sizing:border-box;
+}
+body {
+  margin:0;
+  background:radial-gradient(ellipse at 20% 0%,#18243b 0,transparent 45%),var(--bg);
+  color:var(--text);
+  font:15px/1.5 system-ui,-apple-system,"Noto Sans KR",sans-serif;
+}
+header {
+  padding:22px max(18px,calc((100% - 1180px)/2));
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  background:#0b1120dd;
+  position:sticky;
+  top:0;
+  z-index:5;
+  backdrop-filter:blur(12px);
+}
+.brand {
+  font-weight:900;
+  letter-spacing:.12em;
+}
+.brand span {
+  color:var(--cyan);
+}
+.wallet {
+  display:flex;
+  gap:8px;
+  align-items:center;
+  background:var(--panel2);
+  padding:9px 14px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  font-weight:800;
+}
+.wallet b {
+  color:var(--gold);
+}
+main {
+  max-width:1180px;
+  margin:auto;
+  padding:24px 18px 60px;
+}
+.hero {
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:end;
+  margin-bottom:22px;
+}
+.eyebrow {
+  color:var(--cyan);
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.16em;
+}
+.hero h1 {
+  font-size:clamp(26px,5vw,42px);
+  margin:4px 0;
+}
+.hero p {
+  margin:0;
+  color:var(--muted);
+}
+.tabs {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:22px 0;
+}
+.tab {
+  background:var(--panel);
+  color:var(--muted);
+  border:1px solid var(--line);
+  padding:11px 18px;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:800;
+}
+.tab.active {
+  color:#06151a;
+  background:var(--cyan);
+  border-color:var(--cyan);
+}
+.panel {
+  background:linear-gradient(145deg,#151e30,#101726);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:18px;
+  box-shadow:0 14px 40px #0003;
+}
+.panel h2 {
+  margin:0 0 5px;
+  font-size:21px;
+}
+.sub {
+  color:var(--muted);
+  margin:0 0 16px;
+  font-size:13px;
+}
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(205px,1fr));
+  gap:12px;
+}
+.card {
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  min-height:150px;
+}
+.cardtop {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.tier {
+  font-size:11px;
+  font-weight:900;
+  padding:3px 8px;
+  border-radius:7px;
+}
+.창봉 {
+  background:#e040fb;
+  color:#fff;
+}
+.S {
+  background:#633b27;
+  color:#ffd28a;
+}
+.A {
+  background:#253e66;
+  color:#9dc9ff;
+}
+.B {
+  background:#3c3268;
+  color:#c5b5ff;
+}
+.C {
+  background:#315349;
+  color:#a7f0ca;
+}
+.D {
+  background:#454d5d;
+  color:#d4d9e3;
+}
+.price {
+  font-weight:900;
+  color:var(--gold);
+}
+button {
+  border:0;
+  border-radius:10px;
+  padding:10px 12px;
+  font-weight:800;
+  cursor:pointer;
+  background:var(--cyan);
+  color:#07151b;
+}
+button.secondary {
+  background:#27344b;
+  color:var(--text);
+  border:1px solid #3a4965;
+}
+button.danger {
+  background:#572b3b;
+  color:#ffdce3;
+  border:1px solid #8c4056;
+}
+button:disabled {
+  opacity:.35;
+  cursor:not-allowed;
+}
+.actions {
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:auto;
+}
+.muted {
+  color:var(--muted);
+}
+.stats {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin:15px 0;
+}
+.stat {
+  background:#0c1422;
+  border:1px solid var(--line);
+  padding:12px;
+  border-radius:12px;
+}
+.stat small {
+  display:block;
+  color:var(--muted);
+}
+.stat strong {
+  font-size:22px;
+}
+.deckslot {
+  border:1px dashed #52617d;
+  background:#0d1524;
+  border-radius:12px;
+  min-height:100px;
+  padding:12px;
+}
+.deckslot.filled {
+  border-style:solid;
+  border-color:#3c7180;
+}
+.deckcards {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+.deckcard {
+  background:#19263b;
+  border:1px solid #3b506e;
+  border-radius:12px;
+  padding:12px;
+  min-height:94px;
+}
+.deckcard button {
+  margin-top:8px;
+  width:100%;
+}
+.notice {
+  padding:12px;
+  border-radius:12px;
+  background:#1b293d;
+  border:1px solid #354b6a;
+  color:#c8d8f2;
+  font-size:13px;
+}
+.dangertext {
+  color:var(--red);
+}
+.good {
+  color:var(--green);
+}
+input,select {
+  background:#0c1422;
+  border:1px solid var(--line);
+  color:var(--text);
+  padding:10px;
+  border-radius:9px;
+  width:100%;
+}
+.formrow {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.hidden {
+  display:none!important;
+}
+.log {
+  max-height:190px;
+  overflow:auto;
+  font-size:13px;
+  color:var(--muted);
+}
+.log div {
+  padding:6px 0;
+  border-bottom:1px solid #26334a;
+}
+.stab {
+  background:var(--panel);
+  color:var(--muted);
+  border:1px solid var(--line);
+  padding:9px 16px;
+}
+.stab.active {
+  color:#06151a;
+  background:var(--cyan);
+  border-color:var(--cyan);
+}
+.tiles {
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(92px,1fr));
+  gap:10px;
+}
+.tile {
+  cursor:pointer;
+  text-align:center;
+  font-size:12px;
+  font-weight:700;
+}
+.imgw {
+  position:relative;
+  aspect-ratio:1;
+  background:#0c1422;
+  border:1px solid var(--line);
+  border-radius:12px;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.imgw::before {
+  content:attr(data-i);
+  position:absolute;
+  font-size:28px;
+  font-weight:900;
+  color:#3a4965;
+}
+.imgw img {
+  position:relative;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+.tile.own .imgw {
+  border-color:var(--green);
+  box-shadow:0 0 0 1px var(--green);
+}
+.bd2 {
+  position:absolute;
+  bottom:4px;
+  left:4px;
+  right:4px;
+  z-index:2;
+  font-size:10px;
+  font-weight:900;
+  padding:2px 0;
+  border-radius:6px;
+  background:#5a4a1ecc;
+  color:#ffd98a;
+}
+.bd {
+  position:absolute;
+  top:4px;
+  left:4px;
+  z-index:2;
+  font-size:10px;
+  font-weight:900;
+  padding:2px 5px;
+  border-radius:6px;
+  background:#000a;
+}
+#modal {
+  position:fixed;
+  inset:0;
+  background:#000b;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+}
+.mbox {
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:20px;
+  max-width:460px;
+  width:100%;
+  max-height:92vh;
+  overflow:auto;
+}
+.opts {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:12px;
+}
+.opt {
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  align-items:center;
+}
+footer {
+  color:var(--muted);
+  text-align:center;
+  font-size:12px;
+  padding:25px;
+}
+@media(max-width:650px) {
+  header {
+    padding:14px 16px;
+  }
+  .hero {
+    display:block;
+  }
+  .stats {
+    grid-template-columns:1fr 1fr;
+  }
+  .deckcards {
+    grid-template-columns:repeat(2,1fr);
+  }
+  .formrow {
+    grid-template-columns:1fr;
+  }
+}
+:root {
+  --bg:#0a1730;
+  --panel:#13294f;
+  --panel2:#1b3668;
+  --line:#33559a;
+  --text:#f4f7ff;
+  --muted:#a3b6dc;
+  --cyan:#4cc3ff;
+  --gold:#ffd13d;
+}
+body {
+  background:radial-gradient(ellipse at 50% -10%,#2a5cb8 0,transparent 55%),linear-gradient(#0d1f42,#060e20) fixed;
+  padding-bottom:96px;
+}
+header {
+  background:linear-gradient(#173468ee,#0f2347ee);
+  border-bottom:2px solid #3b64b0;
+}
+.brand {
+  font-size:20px;
+  text-shadow:0 2px 0 #0008;
+}
+.wallet {
+  background:#0b1b3a;
+  border:2px solid #3b64b0;
+  border-radius:999px;
+}
+.panel {
+  background:linear-gradient(#17305c,#112549);
+  border:2px solid #2c4c8c;
+  border-radius:20px;
+  box-shadow:0 6px 0 #060e2088;
+}
+button {
+  background:linear-gradient(#69d4ff,#2f9bf0);
+  color:#04172e;
+  box-shadow:0 4px 0 #0a3a73;
+  border-radius:12px;
+  font-weight:900;
+  transition:transform .08s;
+}
+button:active:not(:disabled) {
+  transform:translateY(3px);
+  box-shadow:0 1px 0 #0a3a73;
+}
+button.secondary {
+  background:linear-gradient(#35538f,#27427a);
+  color:#fff;
+  border:0;
+  box-shadow:0 4px 0 #0d1f45;
+}
+button.danger {
+  background:linear-gradient(#ff7d8f,#d93a55);
+  color:#fff;
+  border:0;
+  box-shadow:0 4px 0 #7c1427;
+}
+.tabs {
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:30;
+  margin:0;
+  padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+  display:flex;
+  gap:6px;
+  flex-wrap:nowrap;
+  justify-content:center;
+  background:linear-gradient(#10224a,#081330);
+  border-top:2px solid #3b64b0;
+}
+.tab {
+  flex:1;
+  max-width:190px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:1px;
+  font-size:12px;
+  padding:7px 4px;
+  background:transparent;
+  color:var(--muted);
+  border:0;
+  box-shadow:none;
+}
+.tab span {
+  font-size:20px;
+}
+.tab.active {
+  background:linear-gradient(#ffe066,#f5b82e);
+  color:#3a2600;
+  box-shadow:0 3px 0 #8a5e00;
+}
+.stab {
+  border-radius:999px;
+  box-shadow:none;
+}
+.stab.active {
+  background:linear-gradient(#ffe066,#f5b82e);
+  color:#3a2600;
+  border-color:#f5b82e;
+}
+.tile.indeck {
+  opacity:.4;
+}
+.tile {
+  transition:transform .1s;
+}
+.tile:hover {
+  transform:translateY(-3px);
+}
+.imgw {
+  background:radial-gradient(circle at 50% 35%,#2f5aa8,#12274f);
+  border:2px solid #3f66b0;
+  border-radius:14px;
+  box-shadow:0 3px 0 #060e2088;
+}
+.t창봉 .imgw {
+  border-color:#e040fb;
+  box-shadow:inset 0 0 16px #e040fbaa,0 3px 0 #060e2088;
+}
+.tS .imgw {
+  border-color:#ffb43c;
+  box-shadow:inset 0 0 16px #ffb43c55,0 3px 0 #060e2088;
+}
+.tA .imgw {
+  border-color:#6fb4ff;
+  box-shadow:inset 0 0 14px #6fb4ff44,0 3px 0 #060e2088;
+}
+.tB .imgw {
+  border-color:#b49aff;
+}
+.tC .imgw {
+  border-color:#6fe3ac;
+}
+.tD .imgw {
+  border-color:#8794ad;
+}
+.tile.own .imgw {
+  box-shadow:0 0 0 2px var(--green),0 0 14px #57e08f66;
+}
+.dgrid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+.dslot {
+  position:relative;
+  aspect-ratio:3/4;
+  border-radius:14px;
+  border:2px dashed #3f66b0;
+  background:#0b1a38;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:center;
+  text-align:center;
+  color:#4f72b5;
+  font-weight:900;
+  cursor:pointer;
+  overflow:hidden;
+}
+.dslot:not(.f) {
+  align-items:center;
+}
+.dslot.f {
+  border-style:solid;
+  background:#13294f;
+}
+.dslot .imgw {
+  flex:1;
+  border-radius:0;
+  border:0;
+  box-shadow:none;
+  aspect-ratio:auto;
+  min-height:0;
+}
+.dslot .dn {
+  font-size:11px;
+  color:#fff;
+  padding:4px 2px;
+  background:#0b1a38;
+}
+.dslot .x {
+  position:absolute;
+  top:4px;
+  right:4px;
+  width:22px;
+  height:22px;
+  padding:0;
+  border-radius:50%;
+  font-size:11px;
+  z-index:3;
+  box-shadow:none;
+  background:#000a;
+  color:#fff;
+}
+.dslot.t창봉 {
+  border-color:#e040fb;
+}
+.dslot.tS {
+  border-color:#ffb43c;
+}
+.dslot.tA {
+  border-color:#6fb4ff;
+}
+.dslot.tB {
+  border-color:#b49aff;
+}
+.dslot.tC {
+  border-color:#6fe3ac;
+}
+.dslot.tD {
+  border-color:#8794ad;
+}
+.dslot.pend {
+  animation:pend .9s infinite alternate;
+}
+@keyframes pend {
+  to {
+    transform:scale(.95);
+    box-shadow:0 0 16px #ffd13d;
+  }
+}
+#modal {
+  z-index:40;
+}
+.mbox {
+  border:2px solid #3f66b0;
+  background:linear-gradient(#17305c,#102246);
+}
+@media(max-width:650px) {
+  .deckcards {
+    grid-template-columns:repeat(2,1fr);
+  }
+  .dgrid {
+    gap:6px;
+  }
+  .dslot .dn {
+    font-size:10px;
+  }
+}
+.guide {
+  background:#0b1a38;
+  border:2px solid #33559a;
+  border-radius:14px;
+  padding:12px 14px;
+  margin:12px 0;
+  font-size:13px;
+  color:#c8d8f2;
+}
+.guide summary {
+  cursor:pointer;
+  font-weight:900;
+  color:var(--gold);
+  font-size:14px;
+}
+.guide ul {
+  margin:8px 0 0;
+  padding-left:18px;
+}
+.guide li {
+  margin:4px 0;
+}
+#overlay {
+  position:fixed;
+  inset:0;
+  background:#000;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:#fff;
+}
+.ovt {
+  font-size:clamp(28px,7vw,60px);
+  font-weight:900;
+  letter-spacing:.04em;
+}
+.ovs {
+  margin-top:18px;
+  color:#7a869c;
+  font-size:14px;
+}
+#lobby {
+  position:fixed;
+  inset:0;
+  background:radial-gradient(circle at 50% 30%,#173468,#071025);
+  z-index:200;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:20px;
+}
+#lobby h1 {
+  font-size:clamp(36px,8vw,64px);
+  margin:0 0 10px;
+  text-shadow:0 4px 12px #000c;
+  color:var(--text);
+}
+#lobby h1 span {
+  color:var(--cyan);
+}
+#lobby p {
+  color:var(--muted);
+  font-size:16px;
+  margin:0 0 30px;
+}
+#lobby button {
+  font-size:20px;
+  padding:16px 48px;
+  border-radius:16px;
+  background:linear-gradient(#ffe066,#f5b82e);
+  color:#3a2600;
+  box-shadow:0 6px 0 #8a5e00;
+  cursor:pointer;
+}
+#lobby button:active {
+  transform:translateY(4px);
+  box-shadow:0 2px 0 #8a5e00;
+}
+#introModal {
+  position:fixed;
+  inset:0;
+  background:#000b;
+  z-index:250;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+}
+.intro-box {
+  background:linear-gradient(#17305c,#102246);
+  border:2px solid #3f66b0;
+  border-radius:20px;
+  padding:24px;
+  max-width:440px;
+  width:100%;
+  text-align:center;
+  box-shadow:0 14px 40px #0009;
+}
+.intro-box h3 {
+  color:var(--gold);
+  margin-top:0;
+  font-size:22px;
+}
+.intro-box p {
+  white-space:pre-line;
+  color:var(--text);
+  font-size:15px;
+  line-height:1.6;
+  margin:16px 0 24px;
+}
+.intro-steps {
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:12px;
+  font-weight:800;
+  letter-spacing:.1em;
+}
+.final {
+  text-align:center;
+  padding:20px 0;
+}
+.final .big {
+  font-size:clamp(40px,10vw,76px);
+  font-weight:900;
+  color:var(--gold);
+  margin:8px 0;
+}
+.hl {
+  margin:6px 0 0;
+  padding-left:18px;
+  font-size:14px;
+  color:#c8d8f2;
+}
+.hl li {
+  margin:6px 0;
+}
+.ht {
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+.ht th,.ht td {
+  padding:8px 10px;
+  border-bottom:1px solid #2c4c8c;
+  text-align:left;
+}
+.ht th {
+  color:var(--gold);
+}
+#anvil {
+  position:fixed;
+  inset:0;
+  background:#000;
+  z-index:150;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+}
+#anvStage {
+  width:min(560px,100%);
+  text-align:center;
+  color:#fff;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:none;
+  -webkit-tap-highlight-color:transparent;
+  padding:30px 0;
+}
+.anvt {
+  font-size:clamp(28px,7vw,48px);
+  font-weight:900;
+}
+.anvs {
+  color:#7a869c;
+  font-size:13px;
+  margin:8px 0 26px;
+}
+.anvtrack {
+  position:relative;
+  height:44px;
+  border-radius:999px;
+  background:#111a2e;
+  border:2px solid #33559a;
+  overflow:hidden;
+}
+.anvzone {
+  position:absolute;
+  top:0;
+  bottom:0;
+  background:#57e08f44;
+  border-left:2px solid #57e08f;
+  border-right:2px solid #57e08f;
+  pointer-events:none;
+}
+.anvmid {
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:50%;
+  width:2px;
+  background:#57e08f99;
+}
+#anvNeedle {
+  position:absolute;
+  top:-2px;
+  bottom:-2px;
+  width:6px;
+  margin-left:-3px;
+  border-radius:3px;
+  background:#ffd13d;
+  box-shadow:0 0 12px #ffd13d;
+  will-change:left;
+  pointer-events:none;
+}
+.anvp {
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  margin:0 0 14px;
+}
+.pip {
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  background:#111a2e;
+  border:2px solid #33559a;
+  color:#7a869c;
+}
+.pip.cur {
+  border-color:#ffd13d;
+  color:#ffd13d;
+}
+.pip.ok {
+  background:#57e08f33;
+  border-color:#57e08f;
+  color:#57e08f;
+}
+.pip.no {
+  background:#ff667d33;
+  border-color:#ff667d;
+  color:#ff667d;
+}
+.anvtick {
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:4px;
+  margin-left:-2px;
+  opacity:.9;
+}
+.anvtick.ok {
+  background:#57e08f;
+}
+.anvtick.no {
+  background:#ff667d;
+}
+.anvr {
+  min-height:30px;
+  margin:22px 0 14px;
+  font-size:20px;
+}
+#anvHit {
+  font-size:20px;
+  padding:14px 40px;
+  border-radius:14px;
+  background:linear-gradient(#ffe066,#f5b82e);
+  color:#3a2600;
+  box-shadow:0 5px 0 #8a5e00;
+}
+.tile.banned {
+  opacity:.45;
+  filter:grayscale(1);
+}
+.anvzl {
+  position:absolute;
+  bottom:2px;
+  left:0;
+  right:0;
+  text-align:center;
+  font-size:10px;
+  color:#9be8bd;
+}
+</style>
+</head>
+<body>
+<div id="lobby">
+  <div style="font-size:14px;font-weight:800;color:var(--cyan);letter-spacing:.2em;margin-bottom:10px">STREAMER CHALLENGE</div>
+  <h1>CLO <span>ARENA</span></h1>
+  <p>카드 미션 아레나에 오신 것을 환영합니다.</p>
+  <button id="lobbyStartBtn">게임 시작</button>
+</div>
+
+<div id="introModal" class="hidden">
+  <div class="intro-box">
+    <div class="intro-steps" id="introStepIndicator">설명 1 / 4</div>
+    <h3 id="introTitle">환영합니다!</h3>
+    <p id="introText">설명 내용</p>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button class="secondary" id="introPrevBtn" style="padding:10px 20px">이전</button>
+      <button id="introNextBtn" style="padding:10px 28px">다음</button>
+    </div>
+  </div>
+</div>
+
+<header>
+  <div class="brand">CLO <span>ARENA</span>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <div class="wallet">🪙 <b id="coins">3,200</b> 코인</div><button class="danger" id="resetBtn" style="padding:7px 10px;font-size:12px">전체 초기화</button>
+  </div>
+</header>
+<main>
+<section class="hero">
+  <div>
+    <div class="eyebrow">STREAMER CHALLENGE / CARD ECONOMY</div>
+    <h1>미션 아레나</h1>
+    <p>전적을 쌓고, 카드를 모으고, 8장 덱으로 승부하라.</p>
+  </div>
+  <div class="muted">시작 자금 <b style="color:var(--gold)">3,200</b> 코인 · 덱 8장</div>
+</section>
+<nav class="tabs">
+<button class="tab active" data-tab="shop"><span>🛒</span>상점</button><button class="tab" data-tab="deck"><span>🃏</span>덱</button><button class="tab" data-tab="gamble"><span>🎲</span>도박</button><button class="tab" data-tab="match"><span>⚔️</span>정산</button><button class="tab" data-tab="help"><span>📖</span>설명</button>
+</nav>
+
+<section id="shop" class="view">
+<div class="panel">
+  <h2>카드 상점</h2>
+  <p class="sub">카드 이미지를 눌러 구매하세요. 일반 구매가 먼저이며, 이후 진화/히어로 중 택1을 구매할 수 있습니다.</p>
+  <div class="stats">
+    <div class="stat"><small>보유 카드 종류</small><strong id="ownedKinds">0</strong>
+    </div>
+    <div class="stat"><small>덱 편성</small><strong id="deckCount">0 / 8</strong>
+    </div>
+    <div class="stat"><small>레버리지</small><strong id="levStatus">미사용</strong>
+    </div>
+  </div>
+  <div class="notice">티어 가격: 창봉 1,500 · S 3,000 · A 2,000 · B 1,200 · C 700 · D 400 코인. 진화·히어로는 각자의 티어 가격을 따릅니다. (수도자, 램라이더는 항상 창봉티어 1,500원 고정)</div>
+  <div class="actions" style="margin-top:12px"><button id="levCancel" class="secondary">레버리지 취소</button><button id="levFinish" class="danger">레버리지 구매 확정</button><span class="notice" id="levInfo">레버리지 미사용 · 카드 1장 가격만큼 1회 대출</span>
+  </div>
+</div>
+<div class="notice" id="dataInfo" style="margin-bottom:12px">
+</div>
+<div style="display:flex;gap:8px;margin:0 0 14px;flex-wrap:wrap"><button class="secondary" id="stRefresh" style="margin-left:auto">↻ 티어 새로고침</button>
+</div>
+<div id="shopGrid">
+</div>
+</section>
+
+<section id="deck" class="view hidden">
+  <div class="panel">
+    <h2>내 덱</h2>
+    <p class="sub" id="deckHint">
+    </p>
+    <div class="dgrid" id="deckSlots">
+    </div>
+    <div class="actions" style="margin-top:12px"><button class="secondary" id="clearDeck">덱 비우기</button>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>카드 컬렉션</h2>
+    <p class="sub">보유 카드를 눌러 덱에 배치하세요. 덱이 가득 찼다면 교체할 슬롯을 고릅니다.</p>
+    <div id="collection" class="tiles">
+    </div>
+  </div>
+</section>
+
+<section id="gamble" class="view hidden">
+<div class="panel"><h2>판당 1회성 도박</h2><p class="sub">매 경기마다 한 번, 원하는 코인을 걸 수 있습니다. 승리하면 건 금액의 2배, 패배하면 0.5배로 정산합니다.</p>
+<div class="formrow">
+  <div><label class="muted">베팅 코인</label><input id="betAmount" type="number" min="1" step="1" value="500">
+  </div>
+  <div><label class="muted">이번 판 도박 상태</label>
+    <div class="notice" id="betStatus">아직 베팅하지 않음</div>
+  </div>
+</div>
+<div class="actions"><button id="placeBet">이번 판 베팅 확정</button><button class="secondary" id="cancelBet">베팅 취소</button></div>
+<p class="notice" style="margin-top:14px">해석 기준: 베팅액을 별도 보관하고 경기 종료 시 베팅액 × 배율을 지급합니다. 승리 ×2, 패배 ×0.5. 매 경기 정산 후 다음 판에 다시 베팅할 수 있습니다.</p></div>
+</section>
+
+<section id="match" class="view hidden">
+<div class="panel"><h2>경기 결과 정산</h2><p class="sub">실제 게임 결과를 입력하면 코인이 자동 정산됩니다. 경기 1회당 도박은 한 번만 정산됩니다.</p>
+<div id="matchReady">
+  <p class="muted" style="margin:0 0 12px">경기 <b id="matchNo"></b> / 10 · 현재 <b id="winNo">0</b>승 · 덱 8장을 완성하고 시작을 누르세요.</p><button id="readyBtn">시작</button>
+</div>
+<div id="matchLive" class="hidden"><label class="muted">결과 선택</label><select id="result"><option value="kingloss">패배 — 내 킹타워 파괴</option><option value="survive">패배 — 내 킹타워 생존 (+100 · 모루질 발동)</option><option value="one">1크라운 승리 — 상대 아처타워 1개 파괴 (+400)</option><option value="two">2크라운 승리 — 상대 아처타워 2개 파괴 (+1,000)</option><option value="kingwin">3크라운 승리 — 상대 킹타워 파괴 (+3,000)</option><option value="perfect">퍼펙트 3크라운 — 노 데미지 승리 (+5,000)</option></select>
+  <div class="actions"><button id="settle">확인</button>
+  </div>
+</div>
+<div id="matchFinal" class="final hidden">
+  <div class="muted">10경기 종료</div>
+  <div class="big">최종 <b id="finWins">0</b>승</div>
+  <div class="muted"><span id="finLoss">0</span>패</div><button class="danger" id="resetAll" style="margin-top:14px">처음부터 다시 시작</button>
+</div>
+<div id="penaltyBox" class="notice hidden" style="margin-top:14px"></div>
+</div>
+<div class="panel"><h2>대전 기록</h2><div class="log" id="history"></div></div>
+</section>
+<section id="help" class="view hidden">
+  <div class="panel">
+    <h2>🛒 카드 구매</h2>
+    <ul class="hl">
+      <li>상점에서 카드 이미지를 눌러 구매합니다. 가격은 티어별: 창봉 1,500 · S 3,000 · A 2,000 · B 1,200 · C 700 · D 400</li>
+      <li><b>일반 구매가 먼저</b>입니다. 진화/히어로가 있는 카드는 일반 구매 후 <b>둘 중 하나만(택1)</b> 구매할 수 있고, 가격은 각자의 티어를 따릅니다. (수도자 및 램라이더 관련 모든 형태는 1,500 코인)</li>
+      <li>덱은 8장이며, 같은 카드는 한 가지 형태만 편성할 수 있습니다. 티어는 실행할 때마다 ClashHaven 기준으로 갱신됩니다.</li>
+      <li><b>파산 구제</b><br>파산 조건: 카드 8장 미만 &amp; 400코인 미만 보유 시 발동<br>· 1차 파산: [정산] 또는 [딱 한번 재도전] 선택<br>· 재도전 후 파산: 선택 없이 현재 승수로 즉시 정산</li>
+      <li>모루질 미달 또는 킹타워 파괴 패배(카드 파쇄 선택)로 카드를 빼앗길 때, 진화·히어로가 적용된 카드는 <b>일반 카드로 되돌아가고</b> 빼앗긴 형태는 <span class="dangertext">영구 재구매 금지</span>입니다. 일반 카드를 빼앗기면 그 카드 전체가 영구 재구매 금지입니다.</li>
+    </ul>
+  </div>
+  <div class="panel">
+    <h2>💳 레버리지</h2>
+    <ul class="hl">
+      <li>계정당 <b>1회</b>, 10경기를 합산해 <b>카드 1장</b>만 가능합니다. 카드 구매 화면의 "레버리지 구매"로 담고 상점에서 확정합니다.</li>
+      <li>구매 시 코인이 차감되지 않고, <b>첫 경기 결과</b>로 정산됩니다.</li>
+      <li><span class="good">승리</span>: 카드 영구 귀속 · <span class="dangertext">패배</span>: 카드 몰수(<b>영구 재구매 금지</b>, 진화·히어로가 적용된 카드는 일반 카드로 되돌림) + 카드 가격만큼 코인 차감 (이때 킹타워 패널티·생존 보상은 적용 안 됨)</li>
+    </ul>
+  </div>
+  <div class="panel">
+    <h2>🎲 도박</h2>
+    <ul class="hl">
+      <li>경기당 1회, 보유 코인 이내로 베팅합니다. 베팅액은 즉시 차감되어 보관됩니다.</li>
+      <li>정산 시 <span class="good">승리 ×2</span> · <span class="dangertext">패배 ×0.5</span>로 돌려받습니다. 정산 전에는 취소(전액 환불)할 수 있습니다.</li>
+    </ul>
+  </div>
+  <div class="panel">
+    <h2>📋 결산 계산</h2>
+    <table class="ht">
+      <tr>
+        <th>경기 결과</th>
+        <th>보상</th>
+      </tr>
+      <tr>
+        <td>패배 · 내 킹타워 생존</td>
+        <td class="good">+100 코인 <span class="muted">· 모루질 발동</span>
+        </td>
+      </tr>
+      <tr>
+        <td>1크라운 승리 (상대 아처타워 1개 파괴)</td>
+        <td class="good">+400 코인</td>
+      </tr>
+      <tr>
+        <td>2크라운 승리 (상대 아처타워 2개 파괴)</td>
+        <td class="good">+1,000 코인</td>
+      </tr>
+      <tr>
+        <td>3크라운 승리 (상대 킹타워 파괴)</td>
+        <td class="good">+3,000 코인</td>
+      </tr>
+      <tr>
+        <td>퍼펙트 3크라운 (노 데미지 및 3크라운 승리)</td>
+        <td class="good">+5,000 코인</td>
+      </tr>
+      <tr>
+        <td>패배 · 내 킹타워 파괴</td>
+        <td class="dangertext">코인 전액 몰수 또는 최고 티어 카드 1장 파쇄 (택1)</td>
+      </tr>
+    </table>
+    <p class="muted" style="font-size:13px;margin:8px 0 0">도박과 레버리지 정산은 같은 경기 결과로 함께 계산됩니다.</p>
+  </div>
+  <div class="panel">
+    <h2>🔨 모루질</h2>
+    <ul class="hl">
+      <li>패배시 발동(3크라운 제외)</li>
+      <li>바늘이 중앙 영역에 도달했을 때 화면 터치 또는 Space 키 입력</li>
+      <li>실패 시: 보유 중인 최고 티어 카드 박탈 (재구매 불가)</li>
+      <li>정산 확인을 누르면 선택한 결과를 한 번 더 확인하는 창이 뜹니다.</li>
+    </ul>
+  </div>
+  <div class="panel">
+    <h2>⚔️ 진행 방식</h2>
+    <ul class="hl">
+      <li>정산 탭에서 <b>시작</b> → 검은 화면 30초 → 결과 선택 후 <b>확인</b> → 정산되고 자동으로 다음 경기로 넘어갑니다.</li>
+      <li>총 <b>10경기</b>를 마치면 최종 승수가 표시됩니다. 시작 코인은 3,200입니다.</li>
+    </ul>
+  </div>
+</section>
+<div id="anvil" class="hidden">
+  <div id="anvStage">
+    <div class="anvt">🔨 모루질</div>
+    <div class="anvs">바늘이 중앙 정확 구간에 있을 때 내려치세요 (Space / 화면 터치) · 3회 중 2회 이상 정확해야 카드 유지</div>
+    <div id="anvPips" class="anvp">
+    </div>
+    <div class="anvtrack" id="anvTrack">
+      <div class="anvzone"><span class="anvzl">정확 ±0.04초</span>
+      </div>
+      <div class="anvmid">
+      </div>
+      <div id="anvNeedle">
+      </div>
+    </div>
+    <div id="anvRes" class="anvr">
+    </div><button id="anvHit" style="pointer-events:none">내려치기! (화면 터치)</button>
+  </div>
+</div>
+<div id="overlay" class="hidden">
+  <div>
+    <div class="ovt">경기를 진행하시오</div>
+    <div class="ovs">남은 시간 <b id="ovSec">30</b>초</div>
+  </div>
+</div>
+<div id="modal" class="hidden">
+</div>
+<footer>프로토타입 · 데이터는 이 브라우저에 저장됩니다. 실제 RoyaleAPI 연동, 계정 로그인 및 서버 동기화는 포함되지 않습니다.</footer>
+</main>
+<script>
+const PR = { 창봉: 1500, S: 3000, A: 2000, B: 1200, C: 700, D: 400 };
+const SPECIAL_CARDS = ["Monk", "Ram Rider"];
+const RAW = "Cannon Cart,S,,;Heal Spirit,S,,;Rascals,S,,;Furnace,S,B,;Lava Hound,S,,;Barbarian Barrel,S,,A;Bandit,S,,;Zappies,S,,;Giant Skeleton,A,,;Royal Ghost,A,A,;Skeleton Dragons,A,,;Graveyard,A,,;Flying Machine,A,,;Elixir Collector,A,,;Mother Witch,A,,;Goblin Hut,A,,;Three Musketeers,A,,;Barbarians,A,B,;Suspicious Bush,A,,;Golem,A,,;Goblin Demolisher,B,,;Dark Prince,B,,C;Bowler,B,,B;Giant,B,A,B;Tombstone,B,,C;Goblin Cage,B,A,;Phoenix,B,,;Berserker,B,,B;Sparky,B,,;Skeleton King,B,,;Goblinstein,B,,;Tornado,B,,;Bomb Tower,B,,;Night Witch,B,,;X-Bow,B,,;Royal Hogs,B,B,;Vines,B,,;Archer Queen,B,,;P.E.K.K.A,B,C,;Fireball,B,,;Fisherman,B,,;Knight,B,A,C;Lightning,B,,;Minion Giant,B,,;Minions,B,,;Spirit Empress,B,,;Poison,B,,;Goblin Gang,B,,;Mega Minion,C,,B;Goblin Giant,C,B,;Giant Snowball,C,B,;Balloon,C,,B;Goblin Curse,C,,;Rage,C,,;Wall Breakers,C,C,;Bomber,C,C,;Skeletons,C,C,;Freeze,C,,;Earthquake,C,,;Mighty Miner,C,,;Goblins,C,,A;Electro Wizard,C,,A;Hunter,C,D,;Arrows,C,,;Miner,C,,;Guards,C,,;Ice Golem,C,,D;Princess,C,C,;Zap,C,S,;Electro Spirit,C,,;Battle Healer,C,,;Ice Spirit,C,D,;Lumberjack,C,A,;Royal Recruits,C,A,;Prince,C,,;Dart Goblin,C,D,;Mini P.E.K.K.A,C,,C;Golden Knight,D,,;The Log,D,,;Inferno Tower,D,,;Monk,창봉,,;Fire Spirit,D,,;Rocket,D,,;Wizard,D,D,D;Royal Giant,D,D,;Magic Archer,D,,D;Ram Rider,창봉,,;Royal Delivery,D,,;Void,D,,;Ice Wizard,D,,A;Spear Goblins,D,,;Baby Dragon,D,A,;Cannon,D,B,;Witch,D,D,;Tesla,D,D,;Elixir Golem,D,,;Executioner,D,D,;Valkyrie,D,D,D;Musketeer,D,C,D;Little Prince,D,,;Hog Rider,D,,;Mega Knight,D,D,;Firecracker,D,D,;Goblin Drill,D,C,;Ronin,D,,;Bats,D,B,;Archers,D,B,;Skeleton Army,D,B,;Inferno Dragon,D,B,;Boss Bandit,D,,;Electro Giant,D,C,;Skeleton Barrel,D,A,;Clone,D,,;Goblin Barrel,D,B,;Elite Barbarians,D,B,;Goblin Machine,D,,;Rune Giant,D,,;Minion Horde,D,A,;Barbarian Hut,D,,;Mirror,D,,;Electro Dragon,D,B,";
+function enforceSpecial(c) {
+    if (SPECIAL_CARDS.includes(c.name)) {
+        c.tier = "창봉";
+        c.price = 1500;
+        if (c.evo) {
+            c.evo = "창봉";
+            c.evoPrice = 1500;
+        }
+        if (c.hero) {
+            c.hero = "창봉";
+            c.heroPrice = 1500;
+        }
+    }
+    return c;
+}
+const mk = (name, tier, e, h) => enforceSpecial({ name, tier, price: PR[tier], evo: e || "", hero: h || "", evoPrice: PR[e] || 0, heroPrice: PR[h] || 0 });
+const fromRaw = r => r.split(";").map(x => { const a = x.split(","); return mk(a[0], a[1], a[2], a[3]); });
+let catalog = fromRaw(RAW), dataInfo = "내장 데이터(기본)";
+try {
+    const cc = JSON.parse(localStorage.getItem("cloArenaCatalogV1") || "null");
+    if (cc && cc.raw) {
+        catalog = fromRaw(cc.raw);
+        dataInfo = "저장본 · " + cc.at;
+    }
+}
+catch (e) { }
+const img = n => "https://www.clashhaven.com/icons/clash-royale/" + n.toLowerCase().replace(/p\.e\.k\.k\.a/, "pekka").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + ".webp";
+let shopTab = "base", openName = null, useName = null, pending = null;
+const KEY = "cloArenaPrototypeV2";
+let state = JSON.parse(localStorage.getItem(KEY) || "null") || { coins: 3200, owned: {}, deck: [], levUsed: false, levMode: false, levCards: [], levTotal: 0, levPending: false, levWon: false, bet: null, match: 1, settled: false, history: [], bankruptCount: 0 };
+const $ = id => document.getElementById(id), fmt = n => Math.floor(n).toLocaleString("ko-KR");
+function rescueCoins() { return 0; }
+function save() { localStorage.setItem(KEY, JSON.stringify(state)); render(); }
+function cardOwned(c) { return state.owned[c.name] || null; }
+function labelForm(c, form) { return form === "evo" ? "진화 " + c.name : form === "hero" ? "히어로 " + c.name : c.name; }
+function variants(c) { let o = cardOwned(c); if (!o)
+    return []; let a = ["base"]; if (o.unlock === "evo")
+    a.push("evo"); if (o.unlock === "hero")
+    a.push("hero"); return a; }
+function render() {
+    $("coins").textContent = fmt(state.coins);
+    $("ownedKinds").textContent = Object.keys(state.owned).length;
+    $("deckCount").textContent = state.deck.length + " / 8";
+    $("levStatus").textContent = state.levUsed ? "사용 완료" : state.levMode ? "구매 중" : "미사용";
+    $("levInfo").textContent = state.levMode ? `레버리지 구매 중 · 누적 ${fmt(state.levTotal)}코인` : (state.levPending ? `첫 경기 결과 대기 · 대상 카드 ${state.levCards.length}장` : "레버리지 미사용 · 카드 1장 가격만큼 1회 대출");
+    $("levCancel").disabled = !state.levMode;
+    $("levFinish").disabled = !state.levMode || state.levCards.length === 0;
+    renderShop();
+    renderDeck();
+    $("betStatus").textContent = state.bet ? `${fmt(state.bet.amount)}코인 베팅 확정` : "아직 베팅하지 않음";
+    $("placeBet").disabled = !!state.bet || state.settled;
+    $("cancelBet").disabled = !state.bet || state.settled;
+    $("history").innerHTML = state.history.map(x => `<div>${x}</div>`).join("") || "기록이 없습니다.";
+    const fin = !!state.finished, pl = !!state.playUntil;
+    $("matchNo").textContent = state.match;
+    $("winNo").textContent = state.wins || 0;
+    $("matchReady").classList.toggle("hidden", fin || pl || !!state.ready);
+    $("matchLive").classList.toggle("hidden", fin || pl || !state.ready);
+    $("matchFinal").classList.toggle("hidden", !fin);
+    $("finWins").textContent = state.wins || 0;
+    $("finLoss").textContent = 10 - (state.wins || 0);
+    tick();
+    renderModal();
+}
+const vb = c => c.evo && c.hero ? "EVO+HERO" : c.evo ? "EVO" : c.hero ? "HERO" : "";
+function renderShop() {
+    $("dataInfo").textContent = "티어 데이터: " + dataInfo;
+    let h = "";
+    const TIER_ORDER = ["창봉", "S", "A", "B", "C", "D"];
+    for (const t of TIER_ORDER) {
+        let items = [];
+        catalog.forEach(c => { if (c.tier === t)
+            items.push([c, "base"]); });
+        if (!items.length)
+            continue;
+        h += `<div class="panel"><h2><span class="tier ${t}">${t}</span> 티어 <span class="muted" style="font-size:13px">· ${items.length}장</span></h2><div class="tiles">` + items.map(([c, f]) => { const o = cardOwned(c), own = f === "base" ? !!o : o?.unlock === f; return `<div class="tile ${own ? "own" : ""}${isBan(c.name, "base") ? " banned" : ""} t${t}" onclick="openCard('${c.name}')"><div class="imgw" data-i="${c.name[0]}">${vb(c) ? `<span class="bd">${vb(c)}</span>` : ""}${isBan(c.name, "base") ? `<span class="bd2">🚫 금지</span>` : ""}<img loading="lazy" src="${img(c.name)}" onerror="this.style.display='none'"></div>${c.name}</div>`; }).join("") + `</div></div>`;
+    }
+    $("shopGrid").innerHTML = h;
+}
+async function getTxt(u, ms) { const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms); try {
+    const r = await fetch(u, { signal: ac.signal, cache: "no-store" });
+    if (!r.ok)
+        throw new Error(r.status);
+    return await r.text();
+}
+finally {
+    clearTimeout(t);
+} }
+function parseTier(html) {
+    const d = new DOMParser().parseFromString(html, "text/html"), base = {}, evo = {}, hero = {};
+    d.querySelectorAll("tr").forEach(tr => {
+        const td = [...tr.querySelectorAll("td")].map(x => x.textContent.trim());
+        if (td.length < 4)
+            return;
+        const n = td[0];
+        let t = td.find(x => /^[SABCD]$/.test(x));
+        if (!t) {
+            const r = td.map(Number).find(v => v >= 20 && v <= 99);
+            if (!r)
+                return;
+            t = r >= 56 ? "S" : r >= 53 ? "A" : r >= 50 ? "B" : r >= 47 ? "C" : "D";
+        }
+        if (/ Evolution$/.test(n))
+            evo[n.replace(/ Evolution$/, "")] = t;
+        else if (/^Hero /.test(n))
+            hero[n.replace(/^Hero /, "")] = t;
+        else
+            base[n] = t;
+    });
+    const names = Object.keys(base);
+    if (names.length < 60)
+        throw new Error("parse");
+    SPECIAL_CARDS.forEach(sc => { base[sc] = "창봉"; delete evo[sc]; delete hero[sc]; });
+    const raw = names.map(n => [n, SPECIAL_CARDS.includes(n) ? "창봉" : base[n], SPECIAL_CARDS.includes(n) ? "" : evo[n] || "", SPECIAL_CARDS.includes(n) ? "" : hero[n] || ""].join(",")).join(";");
+    const m = d.body.textContent.match(/Last updated\s+(\d{1,2} \w+ \d{4})/);
+    return { raw, upd: m ? m[1] : "" };
+}
+async function refreshTier() {
+    const prev = dataInfo;
+    dataInfo = "불러오는 중…";
+    renderShop();
+    const U = "https://www.clashhaven.com/clash-royale/tier-list";
+    for (const u of [U, "https://api.allorigins.win/raw?url=" + encodeURIComponent(U), "https://corsproxy.io/?" + encodeURIComponent(U)]) {
+        try {
+            const r = parseTier(await getTxt(u, 9000));
+            catalog = fromRaw(r.raw);
+            const at = new Date().toLocaleString("ko-KR");
+            try {
+                localStorage.setItem("cloArenaCatalogV1", JSON.stringify({ raw: r.raw, at }));
+            }
+            catch (e) { }
+            dataInfo = `ClashHaven 실시간 · 기준일 ${r.upd || "?"} · 갱신 ${at}${u === U ? "" : " (프록시 경유)"}`;
+            render();
+            return;
+        }
+        catch (e) { }
+    }
+    dataInfo = "⚠ 실시간 불러오기 실패 · 사용 중: " + prev.replace(/^⚠ 실시간 불러오기 실패 · 사용 중: /, "");
+    render();
+}
+const baseOf = x => x.replace(/^(진화|히어로) /, ""), formOf = x => x.startsWith("진화 ") ? "evo" : x.startsWith("히어로 ") ? "hero" : "base";
+function renderDeck() {
+    $("deckSlots").innerHTML = Array.from({ length: 8 }, (_, i) => {
+        const d = state.deck[i];
+        if (!d)
+            return `<div class="dslot" onclick="cancelPend()"><span style="font-size:28px">＋</span></div>`;
+        const n = baseOf(d), f = formOf(d), c = catalog.find(x => x.name === n), t = c ? (f === "evo" ? c.evo : f === "hero" ? c.hero : c.tier) || c.tier : "D";
+        return `<div class="dslot f ${pending ? "pend" : ""} t${t}" onclick="slotClick(${i})"><div class="imgw" data-i="${n[0]}">${f !== "base" ? `<span class="bd">${f === "evo" ? "EVO" : "HERO"}</span>` : ""}<img src="${img(n)}" onerror="this.style.display='none'"></div><div class="dn">${n}</div><button class="x" onclick="event.stopPropagation();removeDeck(${i})">✕</button></div>`;
+    }).join("");
+    $("deckHint").innerHTML = pending ? `교체할 슬롯을 선택하세요 → <b>${pending}</b> <button class="secondary" style="padding:3px 10px" onclick="cancelPend()">취소</button>` : `카드를 눌러 덱에 배치하세요 · ${state.deck.length} / 8`;
+    $("collection").innerHTML = catalog.filter(c => cardOwned(c)).map(c => { const o = cardOwned(c), inD = state.deck.some(x => baseOf(x) === c.name); return `<div class="tile ${inD ? "indeck" : ""} t${c.tier}" onclick="openUse('${c.name}')"><div class="imgw" data-i="${c.name[0]}">${o.unlock ? `<span class="bd">${o.unlock === "evo" ? "EVO" : "HERO"}</span>` : ""}<img loading="lazy" src="${img(c.name)}" onerror="this.style.display='none'"></div>${c.name}</div>`; }).join("") || '<div class="muted">아직 보유 카드가 없습니다.</div>';
+}
+function cancelPend() { pending = null; render(); }
+function openUse(n) { useName = n; renderModal(); }
+function useCard(l) { const n = baseOf(l); if (state.deck.some(x => baseOf(x) === n))
+    return; useName = null; if (state.deck.length < 8) {
+    state.deck.push(l);
+    pending = null;
+}
+else
+    pending = l; save(); }
+function slotClick(i) { if (!pending)
+    return; state.deck[i] = pending; pending = null; save(); }
+function openCard(n) { openName = n; renderModal(); }
+function closeModal() { openName = null; useName = null; renderModal(); }
+function renderModal() {
+    const m = $("modal");
+    if (useName) {
+        const c = catalog.find(x => x.name === useName);
+        if (!c) {
+            useName = null;
+            m.classList.add("hidden");
+            return;
+        }
+        const inD = state.deck.some(x => baseOf(x) === c.name);
+        m.classList.remove("hidden");
+        m.innerHTML = `<div class="mbox" onclick="event.stopPropagation()"><div style="display:flex;gap:14px;align-items:center"><div class="imgw" data-i="${c.name[0]}" style="width:84px;flex:none"><img src="${img(c.name)}" onerror="this.style.display='none'"></div><div><h2 style="margin:0">${c.name}</h2><span class="tier ${c.tier}">${c.tier}</span></div></div><div class="opts" style="margin-top:14px">${variants(c).map(v => `<div class="opt"><b>${v === "base" ? "기본" : v === "evo" ? "진화" : "히어로"}</b><button ${inD ? "disabled" : ""} onclick="useCard('${labelForm(c, v)}')">${inD ? "덱에 편성됨" : "사용"}</button></div>`).join("")}</div><div class="actions" style="margin-top:14px"><button class="secondary" onclick="closeModal()">닫기</button></div></div>`;
+        return;
+    }
+    if (!openName) {
+        m.classList.add("hidden");
+        return;
+    }
+    const c = catalog.find(x => x.name === openName);
+    if (!c) {
+        openName = null;
+        m.classList.add("hidden");
+        return;
+    }
+    const o = cardOwned(c);
+    m.classList.remove("hidden");
+    const bn = isBan(c.name, "base");
+    const lvBtn = state.levUsed ? `<button class="secondary" disabled>레버리지 사용 완료</button>` : state.levMode && state.levCards.length >= 1 ? `<button class="secondary" disabled>레버리지 1장 담김</button>` : `<button class="secondary" onclick="buyLev('${c.name}')">레버리지 구매</button>`;
+    const opt = (f, t, p) => { const bf = isBan(c.name, f), dis = !o || !!o.unlock || state.levMode || bf; return `<div class="opt"><b>${f === "evo" ? "진화" : "히어로"} ${c.name}</b><span class="tier ${t}">${t}</span><div class="price">${fmt(p)} 코인</div><button ${dis ? "disabled" : ""} onclick="buyForm('${c.name}','${f}')">${bf ? "🚫 재구매 금지" : o?.unlock === f ? "구매 완료" : f === "evo" ? "진화 구매" : "히어로 구매"}</button></div>`; };
+    m.innerHTML = `<div class="mbox" onclick="event.stopPropagation()"><div style="display:flex;gap:14px;align-items:center"><div class="imgw" data-i="${c.name[0]}" style="width:84px;flex:none"><img src="${img(c.name)}" onerror="this.style.display='none'"></div><div><h2 style="margin:0">${c.name}</h2><span class="tier ${c.tier}">${c.tier}</span>${vb(c) ? ` <span class="tier" style="background:#5a4a1e;color:#ffd98a">${vb(c)}</span>` : ""}</div></div>
+<div class="notice" style="margin-top:14px"><b>일반 카드</b> · <span class="price">${fmt(c.price)} 코인</span><div class="actions" style="margin-top:8px">${o ? (o.leveraged && (state.levMode || state.levPending) ? `<span class="good">✔ 레버리지 ${state.levMode ? "담김 (확정 전)" : "구매 · 첫 경기 결과 대기"}</span>` : `<span class="good">✔ 보유 중</span>`) : bn ? `<span class="dangertext">🚫 영구 재구매 금지</span>` : `<button onclick="buy('${c.name}')">일반 구매</button>${lvBtn}`}</div>${!o && !bn && !state.levUsed ? `<div class="muted" style="font-size:12px;margin-top:6px">레버리지 구매는 코인이 차감되지 않고, 확정 후 첫 경기 결과로 정산됩니다. (계정당 1회 · 카드 1장만)</div>` : ""}</div>
+${c.evo || c.hero ? `<p class="notice" style="margin-top:12px">⚠ 진화 / 히어로는 <b>택1</b>입니다. 일반 카드를 먼저 구매해야 하며, 둘 중 하나만 구매할 수 있습니다.${o?.unlock ? " (선택 완료)" : ""}</p><div class="opts">${c.evo ? opt("evo", c.evo, c.evoPrice) : ""}${c.hero ? opt("hero", c.hero, c.heroPrice) : ""}</div>` : `<p class="muted" style="font-size:13px">이 카드는 진화/히어로가 없습니다.</p>`}
+<div class="actions" style="margin-top:14px"><button class="secondary" onclick="closeModal()">닫기</button></div></div>`;
+}
+function buy(name) {
+    const c = catalog.find(x => x.name === name);
+    if (state.owned[name])
+        return;
+    if (isBan(name, "base"))
+        return alert("영구 재구매가 금지된 카드입니다.");
+    if (state.coins < c.price)
+        return alert("코인이 부족합니다.");
+    state.coins -= c.price;
+    state.owned[name] = { count: 1, unlock: null };
+    save();
+}
+function buyLev(name) { const c = catalog.find(x => x.name === name); if (isBan(name, "base"))
+    return alert("영구 재구매가 금지된 카드입니다."); if (state.levUsed || state.levPending)
+    return alert("레버리지는 계정당 1회만 사용할 수 있습니다."); if (state.owned[name])
+    return; if (state.levMode && state.levCards.length >= 1)
+    return alert("레버리지는 모든 경기를 합산해 카드 1장만 사용할 수 있습니다.\n담은 카드를 취소한 뒤 다시 고르세요."); if (!state.levMode) {
+    state.levMode = true;
+    state.levCards = [];
+    state.levTotal = 0;
+} state.owned[name] = { count: 1, unlock: null, leveraged: true }; state.levCards.push(name); state.levTotal += c.price; save(); }
+function cancelLeverage() { if (!state.levMode)
+    return; if (!confirm("레버리지 구매를 취소할까요?\n담은 카드가 모두 빠집니다."))
+    return; state.levCards.forEach(n => { delete state.owned[n]; }); state.deck = state.deck.filter(x => !state.levCards.includes(baseOf(x))); state.levMode = false; state.levCards = []; state.levTotal = 0; save(); }
+function buyForm(name, f) {
+    const c = catalog.find(x => x.name === name), o = state.owned[name];
+    if (!o || o.unlock)
+        return;
+    if (state.levMode)
+        return alert("레버리지 구매 중에는 진화/히어로를 구매할 수 없습니다.");
+    if (isBan(name, f))
+        return alert("영구 재구매가 금지된 형태입니다.");
+    const p = f === "evo" ? c.evoPrice : c.heroPrice;
+    if (state.coins < p)
+        return alert("코인이 부족합니다.");
+    if (!confirm(`${f === "evo" ? "진화" : "히어로"} ${c.name} (${fmt(p)}코인)을 구매할까요?\n택1이므로 다른 형태는 구매할 수 없습니다.`))
+        return;
+    state.coins -= p;
+    o.count = 2;
+    o.unlock = f;
+    save();
+}
+function startLeverage() { if (state.levUsed || state.levPending || state.levMode)
+    return alert("레버리지는 계정당 한 번만 사용할 수 있습니다."); state.levMode = true; state.levCards = []; state.levTotal = 0; save(); }
+function finishLeverage() { if (!state.levMode || !state.levCards.length)
+    return; if (!confirm(`레버리지 ${fmt(state.levTotal)}코인을 확정할까요?\n첫 경기 승리 시 카드 영구 귀속, 패배 시 카드 몰수(영구 재구매 금지) + ${fmt(state.levTotal)}코인 추가 차감됩니다.`))
+    return; state.levMode = false; state.levUsed = true; state.levPending = true; state.history.unshift(`레버리지 발동: ${state.levCards.join(", ")} · 총 ${fmt(state.levTotal)}코인`); save(); }
+function addDeck(name) { if (state.deck.includes(name))
+    return alert("이미 덱에 편성된 카드입니다."); if (state.deck.length >= 8)
+    return alert("덱은 최대 8장입니다."); state.deck.push(name); save(); }
+function removeDeck(i) { state.deck.splice(i, 1); save(); }
+function placeBet() { let n = Number($("betAmount").value); if (!Number.isInteger(n) || n < 1 || n > state.coins)
+    return alert("베팅액은 보유 코인 이내의 정수여야 합니다."); state.coins -= n; state.bet = { amount: n }; save(); }
+function cancelBet() { if (!state.bet)
+    return; state.coins += state.bet.amount; state.bet = null; save(); }
+const isBan = (n, f) => !!(state.banned || {})[n + "|" + f];
+function confText(c) { const o = state.owned[c.name]; if (o && o.unlock) {
+    const k = o.unlock === "evo" ? "진화" : "히어로";
+    return `${c.name}의 ${k}가 일반 카드로 되돌아가며, 이 ${k}는 영구 재구매가 금지됩니다.`;
+} return `${c.name} (${c.tier}) 카드가 영구 파쇄되며, 영구 재구매가 금지됩니다.`; }
+function ownedTier(c) { const o = state.owned[c.name]; return (o?.unlock === "evo" ? c.evo : o?.unlock === "hero" ? c.hero : c.tier) || c.tier || "D"; }
+function highestOwnedCard() { const order = ["창봉", "S", "A", "B", "C", "D"]; return catalog.filter(c => state.owned[c.name]).sort((a, b) => order.indexOf(ownedTier(a)) - order.indexOf(ownedTier(b)))[0] || null; }
+function confiscate(c) {
+    state.banned = state.banned || {};
+    const o = state.owned[c.name];
+    if (o && o.unlock) {
+        const f = o.unlock, k = f === "evo" ? "진화" : "히어로";
+        state.banned[c.name + "|" + f] = true;
+        o.unlock = null;
+        o.count = 1;
+        state.deck = state.deck.map(x => baseOf(x) === c.name ? c.name : x);
+        return `${c.name} ${k} 박탈 → 일반 카드로 되돌림 (${k} 영구 재구매 금지)`;
+    }
+    state.banned[c.name + "|base"] = true;
+    delete state.owned[c.name];
+    state.deck = state.deck.filter(x => baseOf(x) !== c.name);
+    return `${c.name} 카드 파쇄 (일반 카드 영구 재구매 금지)`;
+}
+let anvilRes = null;
+function settle() {
+    if (state.finished || !state.ready)
+        return;
+    if (!anvilRes) {
+        if (state.deck.length !== 8)
+            return alert("덱 8장을 먼저 완성해야 경기 정산이 가능합니다.");
+        if (state.levMode)
+            return alert("레버리지 구매를 먼저 확정하세요.");
+        if (!confirm(`이 결과로 정산할까요?\n\n▶ ${$("result").selectedOptions[0].textContent}\n\n확인하면 되돌릴 수 없습니다.`))
+            return;
+        if ($("result").value === "survive")
+            return startAnvil(() => settle());
+    }
+    if (state.settled)
+        return alert("이번 경기는 이미 정산했습니다.");
+    if (state.deck.length !== 8)
+        return alert("덱 8장을 먼저 완성해야 경기 정산이 가능합니다.");
+    if (state.levMode)
+        return alert("레버리지 구매를 먼저 확정하세요.");
+    let r = $("result").value, desc = "", delta = 0;
+    const isLoss = (r === "kingloss" || r === "survive");
+    if (state.levPending && isLoss) {
+        let total = state.levTotal;
+        const lres = [];
+        state.levCards.forEach(n => { if (state.owned[n])
+            lres.push(confiscate(catalog.find(x => x.name === n) || { name: n, tier: "" })); });
+        state.coins = Math.max(0, state.coins - total);
+        state.levPending = false;
+        desc = `레버리지 패배: ${lres.join(" / ")} + ${fmt(total)}코인 차감`;
+    }
+    if (r === "kingloss") {
+        let choice = confirm("킹타워 파괴 패배! 확인=보유 코인 전액 몰수 / 취소=최고 티어 카드 박탈(진화·히어로 적용 시 일반 카드로 되돌림)");
+        if (choice) {
+            state.coins = 0;
+            desc = (desc ? desc + " · " : "") + "킹타워 파괴 패배: 보유 코인 전액 몰수";
+        }
+        else {
+            let c = highestOwnedCard();
+            if (!c) {
+                state.coins = 0;
+                desc = (desc ? desc + " · " : "") + "파쇄할 카드가 없어 보유 코인 전액 몰수";
+            }
+            else {
+                if (!confirm(confText(c) + "\n진행할까요?"))
+                    return;
+                desc = (desc ? desc + " · " : "") + `킹타워 파괴 패배: 최고 티어 → ${confiscate(c)}`;
+            }
+        }
+    }
+    else if (r === "survive") {
+        delta = 100;
+        desc = (desc ? desc + " · " : "") + "내 킹타워 생존 패배: +100코인";
+    }
+    else if (r === "one") {
+        delta = 400;
+        desc = "1크라운 승리: +400코인";
+    }
+    else if (r === "two") {
+        delta = 1000;
+        desc = "2크라운 승리: +1,000코인";
+    }
+    else if (r === "kingwin") {
+        delta = 3000;
+        desc = "3크라운 승리: +3,000코인";
+    }
+    else if (r === "perfect") {
+        delta = 5000;
+        desc = "퍼펙트 3크라운 승리: +5,000코인";
+    }
+    state.coins += delta;
+    if (state.bet) {
+        let payout = state.bet.amount * (r === "kingloss" || r === "survive" ? 0.5 : 2);
+        state.coins += payout;
+        desc += ` · 도박 정산 ${fmt(payout)}코인 지급`;
+    }
+    if (state.levPending && !isLoss) {
+        state.levPending = false;
+        state.levWon = true;
+        desc += " · 레버리지 카드 영구 귀속";
+    }
+    if (anvilRes) {
+        const ar = anvilRes;
+        desc += ` · 모루질 ${ar.hits}/${ANV_TRIES} 적중`;
+        if (ar.keep)
+            desc += " → 카드 유지";
+        else {
+            const c = highestOwnedCard();
+            if (c) {
+                desc += ` → 최고 티어 ${confiscate(c)}`;
+            }
+            else
+                desc += " → 파쇄할 카드 없음";
+        }
+        anvilRes = null;
+    }
+    state.history.unshift(`경기 ${state.match}: ${desc}`);
+    if (["one", "two", "kingwin", "perfect"].includes(r))
+        state.wins = (state.wins || 0) + 1;
+    state.bet = null;
+    state.ready = false;
+    if (state.match >= 10)
+        state.finished = true;
+    else {
+        state.match++;
+        checkBankrupt();
+    }
+    save();
+}
+// 모루질 단일 시간 모델
+const ANV_PERIOD = 2.000, ANV_TOL = 0.040, ANV_TRIES = 3, ANV_NEED = 2, ANV_INPUT_LOCK = 160;
+let anvilRAF = 0, anvilT0 = 0, anvilCb = null, anvilDone = false, anvilLock = 0, anvilList = [], anvilFinishTimer = 0;
+const clamp01 = x => Math.max(0, Math.min(1, x));
+const anvPos = phase => {
+    const half = ANV_PERIOD / 2;
+    return phase <= half ? phase / half : (ANV_PERIOD - phase) / half;
+};
+function signedCycleDelta(value, center, period) { return ((value - center + period / 2) % period + period) % period - period / 2; }
+function anvilFrameAt(timestamp) {
+    const elapsed = Math.max(0, (timestamp - anvilT0) / 1000), phase = ((elapsed % ANV_PERIOD) + ANV_PERIOD) % ANV_PERIOD;
+    const c1 = ANV_PERIOD * .25, c2 = ANV_PERIOD * .75;
+    const d1 = signedCycleDelta(phase, c1, ANV_PERIOD), d2 = signedCycleDelta(phase, c2, ANV_PERIOD);
+    const signedOffset = Math.abs(d1) <= Math.abs(d2) ? d1 : d2;
+    return { phase, position: anvPos(phase), signedOffset, offset: Math.abs(signedOffset), hit: Math.abs(signedOffset) <= ANV_TOL + 1e-9 };
+}
+function syncAnvilZone() {
+    const zone = $("anvTrack").querySelector(".anvzone");
+    const halfWidthPct = (ANV_TOL / (ANV_PERIOD / 2)) * 100;
+    zone.style.left = (50 - halfWidthPct) + "%";
+    zone.style.width = (halfWidthPct * 2) + "%";
+    zone.title = `중앙 통과 ±${ANV_TOL.toFixed(3)}초`;
+    const zoneLabel = zone.querySelector(".anvzl");
+    if (zoneLabel)
+        zoneLabel.textContent = `정확 ±${ANV_TOL.toFixed(3)}초`;
+    $("anvTrack").setAttribute("aria-label", `편도 ${(ANV_PERIOD / 2).toFixed(3)}초 · 왕복 ${ANV_PERIOD.toFixed(3)}초, 정확 판정 ±${ANV_TOL.toFixed(3)}초`);
+}
+function anvPips() {
+    $("anvPips").innerHTML = Array.from({ length: ANV_TRIES }, (_, i) => { const a = anvilList[i]; return `<span class="pip ${a ? (a.hit ? "ok" : "no") : (i === anvilList.length ? "cur" : "")}">${a ? (a.hit ? "✔" : "✖") : i + 1}</span>`; }).join("");
+}
+function stopAnvilLoop() { if (anvilRAF)
+    cancelAnimationFrame(anvilRAF); anvilRAF = 0; }
+function startAnvil(cb) {
+    stopAnvilLoop();
+    if (anvilFinishTimer)
+        clearTimeout(anvilFinishTimer);
+    anvilRes = null;
+    anvilCb = cb;
+    anvilDone = false;
+    anvilT0 = performance.now();
+    anvilLock = 0;
+    anvilList = [];
+    $("anvRes").textContent = "";
+    $("anvTrack").querySelectorAll(".anvtick").forEach(x => x.remove());
+    syncAnvilZone();
+    anvPips();
+    $("anvil").classList.remove("hidden");
+    const loop = ts => {
+        if (anvilDone)
+            return;
+        const frame = anvilFrameAt(performance.now());
+        $("anvNeedle").style.left = (frame.position * 100) + "%";
+        anvilRAF = requestAnimationFrame(loop);
+    };
+    anvilRAF = requestAnimationFrame(loop);
+}
+function anvilHit() {
+    if (anvilDone || !anvilT0)
+        return;
+    const t = performance.now();
+    if (t < anvilLock)
+        return;
+    const frame = anvilFrameAt(t), hit = frame.hit, off = frame.offset, sg = frame.signedOffset;
+    anvilList.push({ hit, off, sg, at: t - anvilT0 });
+    anvilLock = t + ANV_INPUT_LOCK;
+    anvPips();
+    const tk = document.createElement("i");
+    tk.className = "anvtick " + (hit ? "ok" : "no");
+    tk.style.left = (frame.position * 100) + "%";
+    $("anvTrack").appendChild(tk);
+    const n = anvilList.length;
+    $("anvRes").innerHTML = `${n}회차 · ` + (hit ? '<b class="good">정확!</b>' : '<b class="dangertext">빗나감</b>') + ` (중앙 통과 대비 ${sg >= 0 ? "+" : "−"}${off.toFixed(3)}초 · ${sg >= 0 ? "늦음" : "빠름"} · 기준 ±${ANV_TOL.toFixed(3)}초)`;
+    if (n >= ANV_TRIES) {
+        anvilDone = true;
+        stopAnvilLoop();
+        const hits = anvilList.filter(x => x.hit).length, keep = hits >= ANV_NEED;
+        anvilRes = { hits, keep, list: anvilList.slice() };
+        $("anvRes").innerHTML += `<br>${hits}/${ANV_TRIES} 적중 — ` + (keep ? '<b class="good">카드 유지!</b>' : '<b class="dangertext">최고 티어 카드 박탈 (진화·히어로는 일반 카드로 되돌림)</b>');
+        anvilFinishTimer = setTimeout(() => {
+            $("anvil").classList.add("hidden");
+            const cb = anvilCb;
+            anvilCb = null;
+            anvilFinishTimer = 0;
+            if (cb)
+                cb();
+        }, 1800);
+    }
+}
+$("anvStage").addEventListener("pointerdown", e => { e.preventDefault(); anvilHit(); }, { passive: false });
+document.addEventListener("keydown", e => { if (!$("anvil").classList.contains("hidden") && (e.code === "Space" || e.code === "Enter")) {
+    e.preventDefault();
+    if (!e.repeat)
+        anvilHit();
+} });
+function fullReset() { if (!confirm("전체 초기화\n\n코인·보유 카드·덱·레버리지·전적이 모두 삭제됩니다.\n계속할까요?"))
+    return; if (!confirm("정말로 초기화할까요?\n\n이 작업은 되돌릴 수 없습니다."))
+    return; try {
+    localStorage.removeItem(KEY);
+    localStorage.removeItem("cloArenaCatalogV1");
+}
+catch (e) { } location.reload(); }
+function checkBankrupt() {
+    if (state.finished)
+        return false;
+    const totalOwned = Object.keys(state.owned).length;
+    const hasNoBet = !state.bet;
+    const isPoor = state.coins < 400;
+    if (totalOwned < 8 && hasNoBet && isPoor) {
+        if (state.bankruptCount >= 1) {
+            // 두 번째 파산 발생: 선택 없이 바로 최종 승수 화면 띄우기
+            state.finished = true;
+            state.bankruptCount = (state.bankruptCount || 0) + 1;
+            state.history.unshift(`2차 파산 발생: 즉시 최종 승수(${state.wins || 0}승)로 정산 종료`);
+            save();
+            return true;
+        }
+        else {
+            // 첫 번째 파산 발생: 구제 설명 팝업 띄우고 (정산 vs 딱 한번 재도전) 선택
+            showBankruptModal();
+            return true;
+        }
+    }
+    return false;
+}
+function showBankruptModal() {
+    const m = $("modal");
+    m.classList.remove("hidden");
+    m.innerHTML = `<div class="mbox" onclick="event.stopPropagation()">
+    <h2 style="color:var(--red);margin-top:0">⚠ 파산 / 구제 안내</h2>
+    <p class="notice" style="line-height:1.6">
+      <b>[파산 조건]</b> 카드 8장 미만 &amp; 400코인 미만 보유 시 발동<br>
+      · 1차 파산: [정산] 또는 [딱 한번 재도전] 선택<br>
+      · 재도전 후 파산: 선택 없이 현재 승수로 즉시 정산
+    </p>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px">
+      <button id="bkConfirmWins" style="width:100%;padding:12px;background:linear-gradient(#ffe066,#f5b82e);color:#3a2600">정산 (현재 승수로 최종 정산)</button>
+      <button class="danger" id="bkReset" style="width:100%;padding:12px">딱 한번 재도전 (처음부터 · 3,200코인 재지급)</button>
+    </div>
+  </div>`;
+    $("bkConfirmWins").onclick = () => {
+        state.finished = true;
+        state.bankruptCount = (state.bankruptCount || 0) + 1;
+        m.classList.add("hidden");
+        state.history.unshift(`파산 구제: 정산 선택 (${state.wins || 0}승으로 종료)`);
+        save();
+    };
+    $("bkReset").onclick = () => {
+        const currentBankruptCount = (state.bankruptCount || 0) + 1;
+        state = {
+            coins: 3200,
+            owned: {},
+            deck: [],
+            levUsed: false,
+            levMode: false,
+            levCards: [],
+            levTotal: 0,
+            levPending: false,
+            levWon: false,
+            bet: null,
+            match: 1,
+            settled: false,
+            history: [`파산 구제: 딱 한번 재도전 (3,200코인 재지급)`],
+            bankruptCount: currentBankruptCount
+        };
+        m.classList.add("hidden");
+        save();
+    };
+}
+function readyMatch() {
+    if (state.levMode)
+        return alert("레버리지 구매를 먼저 확정하세요.");
+    if (checkBankrupt())
+        return;
+    if (state.deck.length !== 8)
+        return alert("덱 8장을 먼저 완성해야 합니다.");
+    if (state.finished || state.playUntil)
+        return;
+    state.ready = false;
+    state.playUntil = Date.now() + 30000;
+    save();
+}
+function tick() { if (state.playUntil) {
+    const left = state.playUntil - Date.now();
+    if (left <= 0) {
+        state.playUntil = 0;
+        state.ready = true;
+        save();
+    }
+    else {
+        $("overlay").classList.remove("hidden");
+        $("ovSec").textContent = Math.ceil(left / 1000);
+    }
+}
+else
+    $("overlay").classList.add("hidden"); }
+document.querySelectorAll(".tab").forEach(b => b.onclick = () => { document.querySelectorAll(".tab").forEach(x => x.classList.toggle("active", x === b)); document.querySelectorAll(".view").forEach(x => x.classList.toggle("hidden", x.id !== b.dataset.tab)); });
+// 소개 팝업 단계 로직
+const introSteps = [
+    { title: "1. 카드 상점과 티어", text: "시작 자금 3,200코인으로 카드를 구매하세요. 각 카드들은 티어(S~D)에 따라 가격이 설정되어 있습니다." },
+    { title: "2. 덱 편성 및 레버리지", text: "구매한 카드로 8장의 덱을 완성하세요. 계정당 1회 강력한 '레버리지' 대출을 통해 카드를 미리 확보할 수 있습니다." },
+    { title: "3. 경기 정산과 도박", text: "총 10경기를 진행하며 경기 결과(1~3크라운, 퍼펙트 등)에 따라 코인을 획득하거나 잃게 됩니다. 돈을 걸 경우: 승리 시 2배 지급 / 패배 시 0.5배 환급" },
+    { title: "4. 파산 구제 선택권", text: "파산 조건: 카드 8장 미만 & 400코인 미만 보유 시 발동\n· 1차 파산: [정산] 또는 [딱 한번 재도전] 선택\n· 재도전 후 파산: 선택 없이 현재 승수로 즉시 정산" },
+    { title: "5. 모루질", text: "패배시 발동(3크라운 제외)\n· 바늘이 중앙 영역에 도달했을 때 화면 터치 또는 Space 키 입력\n· 실패 시: 보유 중인 최고 티어 카드 박탈 (재구매 불가)" }
+];
+let currentIntroStep = 0;
+$("lobbyStartBtn").onclick = () => {
+    document.getElementById("lobby").style.display = "none";
+    currentIntroStep = 0;
+    updateIntroStep();
+    document.getElementById("introModal").classList.remove("hidden");
+};
+function updateIntroStep() {
+    const s = introSteps[currentIntroStep];
+    $("introStepIndicator").textContent = `설명 ${currentIntroStep + 1} / ${introSteps.length}`;
+    $("introTitle").textContent = s.title;
+    $("introText").textContent = s.text;
+    $("introPrevBtn").style.display = currentIntroStep === 0 ? "none" : "inline-block";
+    $("introNextBtn").textContent = currentIntroStep === introSteps.length - 1 ? "아레나 입장하기" : "다음";
+}
+$("introPrevBtn").onclick = () => {
+    if (currentIntroStep > 0) {
+        currentIntroStep--;
+        updateIntroStep();
+    }
+};
+$("introNextBtn").onclick = () => {
+    if (currentIntroStep < introSteps.length - 1) {
+        currentIntroStep++;
+        updateIntroStep();
+    }
+    else {
+        document.getElementById("introModal").classList.add("hidden");
+    }
+};
+$("levCancel").onclick = cancelLeverage;
+$("levFinish").onclick = finishLeverage;
+$("placeBet").onclick = placeBet;
+$("cancelBet").onclick = cancelBet;
+$("settle").onclick = settle;
+$("readyBtn").onclick = readyMatch;
+$("resetAll").onclick = fullReset;
+$("resetBtn").onclick = fullReset;
+setInterval(tick, 500);
+$("clearDeck").onclick = () => { state.deck = []; save(); };
+window.buy = buy;
+window.buyForm = buyForm;
+window.openCard = openCard;
+window.closeModal = closeModal;
+$("modal").onclick = closeModal;
+window.addDeck = addDeck;
+window.removeDeck = removeDeck;
+$("stRefresh").onclick = refreshTier;
+render();
+refreshTier();
+</script>
+</body></html>
